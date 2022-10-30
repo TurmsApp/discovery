@@ -3,6 +3,7 @@
 
 # Use it
 - download the `GitHub code`
-- use `iex -S mix` (install packages and start it)
+- run `mix deps.get`
+- use `iex -S mix`
 
 *If you change the code and don't want to disconnect users, type `recompile()`*
