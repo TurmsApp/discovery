@@ -5,7 +5,7 @@ defmodule Gravitalia.MixProject do
     [
       app: :gravitalia,
       version: "0.1.0",
-      elixir: "~> 1.13",
+      elixir: "~> 1.14",
       start_permanent: true,
       deps: deps()
     ]
@@ -25,9 +25,10 @@ defmodule Gravitalia.MixProject do
       # {:dep_from_hexpm, "~> 0.3.0"},
       # {:dep_from_git, git: "https://github.com/elixir-lang/my_dep.git", tag: "0.1.0"}
       {:cowboy, "~> 2.9"},
-      {:plug, "~> 1.13"},
-      {:plug_cowboy, "~> 2.5"},
-      {:jason, "~> 1.3"}
+      {:plug, "~> 1.14"},
+      {:plug_cowboy, "~> 2.6"},
+      {:jason, "~> 1.4"},
+      {:joken, "~> 2.6"}
     ]
   end
 end
