@@ -1,10 +1,12 @@
 defmodule Gravitalia.SocketHandler do
   @behaviour :cowboy_websocket
+  @timeout 60000
 
   def init(request, _state) do
     state = %{registry_key: request.path}
+    opts = %{compress: true}
 
-    {:cowboy_websocket, request, state}
+    {:cowboy_websocket, request, state, opts}
   end
 
   def websocket_init(state) do
@@ -19,10 +21,10 @@ defmodule Gravitalia.SocketHandler do
     if Map.has_key?(payload, "t") do
       case String.downcase(payload["t"]) do
         "ping" ->
-          {:reply, {:text, Jason.encode!(%{op: 10, t: "PONG"})}, state, :hibernate}
+          {:reply, {:text, Jason.encode!(%{op: 0xA, t: "PONG"})}, state, :hibernate}
         "connect" ->
           if payload["d"]["token"] do
-            {:reply, {:text, Jason.encode!(%{op: 1, t: "CONNECTED", d: 400000})}, state, :hibernate}
+            {:reply, {:text, Jason.encode!(%{op: 1, t: "CONNECTED", d: 40000})}, state}
           else
             {:reply, {:close, 3000, <<"Invalid token">>}, state}
           end
@@ -30,15 +32,6 @@ defmodule Gravitalia.SocketHandler do
           if payload["d"] do
             message = payload["d"]["message"]
             IO.puts("Received message: #{message}")
-
-            Registry.Gravitalia
-            |> Registry.dispatch(state.registrykey, fn(entries) ->
-              for {pid, } <- entries do
-                if pid != self() do
-                  Process.send(pid, message, [])
-                end
-              end
-            end)
 
             {:reply, {:text, message}, state}
           else
@@ -56,5 +49,9 @@ defmodule Gravitalia.SocketHandler do
 
   def websocket_info(info, state) do
     {:reply, {:text, info}, state}
+  end
+
+  def websocket_terminate(_reason, _req, _state) do
+    :ok
   end
 end
