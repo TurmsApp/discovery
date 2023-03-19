@@ -1,6 +1,5 @@
 defmodule Gravitalia.SocketHandler do
   @behaviour :cowboy_websocket
-  @timeout 60000
 
   def init(request, _state) do
     state = %{registry_key: request.path}
