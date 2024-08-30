@@ -17,7 +17,7 @@ config :discovery, Turms.Repo,
 # you can enable the server option below.
 config :discovery, TurmsWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "CQQ5aqw9LDpY8BJxFoMj2H39/oixnJX+Fo5v3WtEtPxTND0zJHgfyFK7lca2dEvB",
+  secret_key_base: "iP5BgAbNql/SmkqjmZMtao44gd2V6u7A37dMD7yZoqrlGc0CIr6Luf6K4q1de4lK",
   server: false
 
 # Print only warnings and errors during test
@@ -25,3 +25,7 @@ config :logger, level: :warning
 
 # Initialize plugs at runtime for faster test compilation
 config :phoenix, :plug_init_mode, :runtime
+
+# Enable helpful, but potentially expensive runtime checks
+config :phoenix_live_view,
+  enable_expensive_runtime_checks: true

@@ -17,11 +17,23 @@ config :discovery, TurmsWeb.Endpoint,
   url: [host: "localhost"],
   adapter: Bandit.PhoenixAdapter,
   render_errors: [
-    formats: [json: TurmsWeb.ErrorJSON],
+    formats: [html: TurmsWeb.ErrorHTML, json: TurmsWeb.ErrorJSON],
     layout: false
   ],
   pubsub_server: Turms.PubSub,
-  live_view: [signing_salt: "lcRn6Kt0"]
+  live_view: [signing_salt: "nZVxVOb4"]
+
+# Configure tailwind (the version is required)
+config :tailwind,
+  version: "3.4.3",
+  discovery: [
+    args: ~w(
+      --config=tailwind.config.js
+      --input=css/app.css
+      --output=../priv/static/assets/app.css
+    ),
+    cd: Path.expand("../assets", __DIR__)
+  ]
 
 # Configures Elixir's Logger
 config :logger, :console,
