@@ -23,8 +23,10 @@ config :discovery, TurmsWeb.Endpoint,
   check_origin: false,
   code_reloader: true,
   debug_errors: true,
-  secret_key_base: "tEnPj3wFK+RdD/sjTe5n9jgg+Zs3DDNOYTSFjP3EGo2a1xfu70pfrl+wluQNJGL+",
-  watchers: []
+  secret_key_base: "ThHs1A0wdWqaAIxiGH5SCizQdpKasNpWlhQcq1q4VabvGf/4qJJ5KLxXlWc4aijB",
+  watchers: [
+    tailwind: {Tailwind, :install_and_run, [:discovery, ~w(--watch)]}
+  ]
 
 # ## SSL Support
 #
@@ -49,6 +51,16 @@ config :discovery, TurmsWeb.Endpoint,
 # configured to run both http and https servers on
 # different ports.
 
+# Watch static and templates for browser reloading.
+config :discovery, TurmsWeb.Endpoint,
+  live_reload: [
+    patterns: [
+      ~r"priv/static/(?!uploads/).*(js|css|png|jpeg|jpg|gif|svg)$",
+      ~r"priv/gettext/.*(po)$",
+      ~r"lib/discovery_web/(controllers|live|components)/.*(ex|heex)$"
+    ]
+  ]
+
 # Enable dev routes for dashboard and mailbox
 config :discovery, dev_routes: true
 
@@ -61,3 +73,9 @@ config :phoenix, :stacktrace_depth, 20
 
 # Initialize plugs at runtime for faster development compilation
 config :phoenix, :plug_init_mode, :runtime
+
+config :phoenix_live_view,
+  # Include HEEx debug annotations as HTML comments in rendered markup
+  debug_heex_annotations: true,
+  # Enable helpful, but potentially expensive runtime checks
+  enable_expensive_runtime_checks: true
