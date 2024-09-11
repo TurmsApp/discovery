@@ -15,7 +15,7 @@ defmodule TurmsWeb.Endpoint do
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
-  socket "/websocket", TurmsWeb.DiscoverySocket,
+  socket "/socket", TurmsWeb.DiscoverySocket,
     websocket: true,
     longpoll: false
 
