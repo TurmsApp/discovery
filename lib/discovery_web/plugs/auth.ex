@@ -1,54 +1,32 @@
 defmodule TurmsWeb.Plugs.Authentification do
   @moduledoc """
-  Generate and verify connection tokens.
+  Generate connection tokens.
+  Verify token using Joken.verify_and_validate
   """
   alias TurmsWeb.Auth
 
   use Joken.Config
 
   @hour_in_seconds 60 * 60
+  @issuer Application.compile_env(:discovery, :app_config)[:host] ||
+            Atom.to_string(Application.compile_env(:discovery, :namespace))
 
   @spec claims(String.t()) :: %{optional(binary()) => Joken.Claim.t()}
   def claims(user_id) do
-    issuer = Application.get_env(:discovery, :app_config)[:host]
     expire = Joken.current_time() + @hour_in_seconds
 
     default_claims(
       skip: [:nbf, :jti],
-      iss: issuer,
+      iss: @issuer,
       iat: Joken.current_time(),
-      exp: expire,
-      aud: user_id
+      exp: expire
     )
-  end
-
-  @spec verify(String.t()) :: nil | String.t()
-  def verify(token) do
-    signer = Joken.Signer.create("HS256", "your_secret_key")
-
-    case Joken.Signer.verify(token, signer) do
-      {:ok, claims} ->
-        cond do
-          :os.system_time(:millisecond) / 1000 >= Map.get(claims, "exp") ->
-            nil
-
-          Map.get(claims, "iss") != Application.get_env(:discovery, :app_config)[:host] ->
-            nil
-
-          true ->
-            Map.get(claims, "sub")
-        end
-
-      {:error, _reason} ->
-        nil
-    end
+    |> add_claim("aud", fn -> user_id end, nil)
   end
 
   @spec generate(String.t()) :: String.t()
   def generate(user_id) do
-    signer = Joken.Signer.parse_config()
-
-    {ok, token, _claims} = Joken.generate_and_sign(claims(user_id), signer)
+    {ok, token, _claims} = Joken.generate_and_sign(claims(user_id), %{})
 
     if ok != :ok do
       ""
