@@ -3,7 +3,6 @@ defmodule TurmsWeb.Plugs.Authentification do
   Generate connection tokens.
   Verify token using Joken.verify_and_validate
   """
-  alias TurmsWeb.Auth
 
   use Joken.Config
 
@@ -21,7 +20,7 @@ defmodule TurmsWeb.Plugs.Authentification do
       iat: Joken.current_time(),
       exp: expire
     )
-    |> add_claim("aud", fn -> user_id end, nil)
+    |> add_claim("sub", fn -> user_id end, nil)
   end
 
   @spec generate(String.t()) :: String.t()
