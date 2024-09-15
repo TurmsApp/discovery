@@ -16,7 +16,9 @@ defmodule TurmsWeb.Endpoint do
     longpoll: [connect_info: [session: @session_options]]
 
   socket "/socket", TurmsWeb.DiscoverySocket,
-    websocket: true,
+    websocket: [
+      max_frame_size: 5 * 1000 # 5kB.
+    ],
     longpoll: false
 
   # Serve at "/" the static files from "priv/static" directory.
