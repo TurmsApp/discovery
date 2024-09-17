@@ -1,4 +1,7 @@
 defmodule Turms.Message do
+  @moduledoc """
+  Ecto model for messages table.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
@@ -6,7 +9,7 @@ defmodule Turms.Message do
     field :message, :string, redact: true
     field :date, :utc_datetime
     field :attachements, {:array, :integer}
-    field :user_id, :id
+    field :user_vanity, :id
 
     has_many :attachments, Turms.Attachment
 

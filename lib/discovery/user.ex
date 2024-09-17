@@ -1,4 +1,7 @@
 defmodule Turms.User do
+  @moduledoc """
+  Ecto model for users table.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 

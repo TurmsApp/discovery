@@ -1,4 +1,7 @@
 defmodule Turms.Attachment do
+  @moduledoc """
+  Ecto model for attachments table.
+  """
   use Ecto.Schema
   import Ecto.Changeset
 
