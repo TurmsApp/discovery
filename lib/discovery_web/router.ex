@@ -20,10 +20,11 @@ defmodule TurmsWeb.Router do
     get "/", PageController, :home
   end
 
-  # Other scopes may use custom stacks.
-  # scope "/api", TurmsWeb do
-  #   pipe_through :api
-  # end
+  scope "/api", TurmsWeb do
+    pipe_through :api
+
+    post "/auth", AuthController, :login_or_signup
+  end
 
   # Enable LiveDashboard in development
   if Application.compile_env(:discovery, :dev_routes) do
