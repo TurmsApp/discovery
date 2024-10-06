@@ -16,6 +16,7 @@ defmodule TurmsWeb.Plugs.Authentification do
 
     default_claims(
       skip: [:nbf, :jti],
+      aud: @issuer,
       iss: @issuer,
       iat: Joken.current_time(),
       exp: expire
