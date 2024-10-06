@@ -15,9 +15,10 @@ defmodule TurmsWeb.Endpoint do
     websocket: [connect_info: [session: @session_options]],
     longpoll: [connect_info: [session: @session_options]]
 
-  socket "/socket", TurmsWeb.DiscoverySocket,
+  socket "/socket", TurmsWeb.UserSocket,
     websocket: [
-      max_frame_size: 5 * 1000 # 5kB.
+      # 5kB.
+      max_frame_size: 5 * 1000
     ],
     longpoll: false
 
