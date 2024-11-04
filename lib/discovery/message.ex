@@ -6,20 +6,16 @@ defmodule Turms.Message do
   import Ecto.Changeset
 
   schema "messages" do
-    field :message, :string, redact: true
-    field :date, :utc_datetime
-    field :attachements, {:array, :integer}
-    field :user_vanity, :id
-
-    has_many :attachments, Turms.Attachment
-
-    timestamps(type: :utc_datetime)
+    field(:content, :string, redact: true)
+    belongs_to(:user, Turms.User, foreign_key: :user_vanity, references:
+                :vanity, type: :string)
+    timestamps()
   end
 
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:message, :date, :attachements])
-    |> validate_required([:message, :date, :attachements])
+    |> cast(attrs, [:content, :user_vanity])
+    |> validate_required([:content, :user_vanity])
   end
 end
