@@ -3,12 +3,11 @@ defmodule TurmsWeb.DiscoverChannel do
   use TurmsWeb, :channel
 
   @impl true
-  def join("discover:lobby", _payload, socket) do
+  def join("", _payload, socket) do
     Logger.debug("#{socket.assigns.user_id} is now on lobby.")
 
     # After join, send awaiting messages.
-    # After send, messages are retained for 5 minute in case of non-receive.
-    # After retention, they are deleted.
+    # After send, server waits a receipt and then, delete messages on database.
     send(self(), :after_join)
 
     # Always allow a client to join this channel.
@@ -19,12 +18,16 @@ defmodule TurmsWeb.DiscoverChannel do
   # Messages sent are retained 5 minutes.
   @impl true
   def handle_info(:after_join, socket) do
+    messages = Turms.Repo.get_by(Turms.Message, user_vanity: socket.assigns.user_id)
+
+    IO.inspect(messages)
+
     push(socket, "pending_messages", [])
     {:noreply, socket}
   end
 
   # Channels can be used in a request/response fashion
-  # by sending replies to requests from the client
+  # by sending replies to requests from the client.
   @impl true
   def handle_in("ping", payload, socket) do
     {:reply, {:ok, payload}, socket}
