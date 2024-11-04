@@ -5,12 +5,14 @@ defmodule Turms.User do
   use Ecto.Schema
   import Ecto.Changeset
 
+  @primary_key {:vanity, :string, []}
   schema "users" do
     field(:name, :string)
     field(:public, :boolean, default: false)
     field(:password, :string, redact: true, default: nil, virtual: true)
     field(:hashed_password, :string, redact: true, default: nil)
-    field(:vanity, :string, primary_key: true)
+    has_many(:messages, Turms.Message)
+    timestamps()
   end
 
   @doc false
