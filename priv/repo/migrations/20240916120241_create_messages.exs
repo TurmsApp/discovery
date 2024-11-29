@@ -3,14 +3,12 @@ defmodule Turms.Repo.Migrations.CreateMessages do
 
   def change do
     create table(:messages) do
-      add :message, :string
-      add :date, :utc_datetime
-      add :attachements, {:array, :integer}
-      add :user_vanity, references(:users, column: :vanity, type: :string, on_delete: :nothing)
-
-      timestamps(type: :utc_datetime)
+      add :content, :string
+      add :from, :string
+      add :user_vanity, references(:users, column: :vanity, type: :string)
+      timestamps()
     end
 
-    create index(:messages, [:user_vanity])
+  create index(:messages, [:user_vanity])
   end
 end
