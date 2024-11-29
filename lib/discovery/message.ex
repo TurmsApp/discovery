@@ -7,6 +7,7 @@ defmodule Turms.Message do
 
   schema "messages" do
     field(:content, :string, redact: true)
+    field(:from, :string) # field must be hashed client-site.
     belongs_to(:user, Turms.User, foreign_key: :user_vanity, references:
                 :vanity, type: :string)
     timestamps()

@@ -1,16 +1,13 @@
-defmodule Turms.Repo.Migrations.CreateMessages do
+defmodule Turms.Repo.Migrations.CreateUsers do
   use Ecto.Migration
 
   def change do
-    create table(:messages) do
-      add :message, :string
-      add :date, :utc_datetime
-      add :attachements, {:array, :integer}
-      add :user_vanity, references(:users, column: :vanity, type: :string, on_delete: :nothing)
-
-      timestamps(type: :utc_datetime)
+    create table(:users, primary_key: false) do
+      add :vanity, :string, primary_key: true
+      add :name, :string
+      add :hashed_password, :string, default: nil, null: true
+      add :public, :boolean, default: false, null: false
+      timestamps()
     end
-
-    create index(:messages, [:user_vanity])
   end
 end
