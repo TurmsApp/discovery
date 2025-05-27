@@ -1,0 +1,38 @@
+services:
+  discovery:
+    container_name: turms_discovery
+    build:
+      context: .
+    restart: always
+    depends_on:
+      - postgres
+    ports:
+      - 4000:4000
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/discovery_dev
+      SECRET_KEY_BASE: SM8qOLrgluwC6o8fdykGC5sGcqlDoCDVpn4Xi15odFN/vdlr4OtwnRSnq/I6dMjI # mix phx.gen.secret
+      POOL_SIZE: 5
+      PHX_HOST: localhost
+      PORT: 4000
+
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: discovery_dev
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - authentification
+
+volumes:
+  postgres-data:
+
+networks:
+  authentification:
+    driver: bridge
