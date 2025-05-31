@@ -14,6 +14,11 @@ defmodule TurmsWeb.AuthController do
     end
   end
 
+    # API to allow users to connect or create account.
+  def login_or_signup(conn, %{} = _params) do
+    Response.error(conn, "Missing `vanity` field in body", :bad_request)
+  end
+
   defp create_new_user(conn, vanity) do
     attrs = %{
       vanity: vanity,
