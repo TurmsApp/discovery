@@ -56,6 +56,7 @@ defmodule Turms.MixProject do
       {:gettext, "~> 0.26"},
       {:jason, "~> 1.4"},
       {:joken, "~> 2.6"},
+      {:joken_jwks, "~> 1.7"},
       {:dns_cluster, "~> 0.2.0"},
       {:bandit, "~> 1.6"}
     ]

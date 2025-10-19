@@ -1,37 +1,55 @@
 defmodule TurmsWeb.Plugs.Authentification do
   @moduledoc """
-  Generate connection tokens.
-  Verify token using Joken.verify_and_validate
+  Handle JWT verification.
   """
 
-  use Joken.Config
+  use Joken.Config, default_signer: nil
 
-  @hour_in_seconds 60 * 60
-  @issuer Application.compile_env(:discovery, :app_config)[:host] ||
-            Atom.to_string(Application.compile_env(:discovery, :namespace))
+  @issuer "https://turms.gravitalia.com"
+  @audience "discovery"
+  @jwks_url "#{@issuer}/.well-known/jwks.json"
 
-  @spec claims(String.t()) :: %{optional(binary()) => Joken.Claim.t()}
-  def claims(user_id) do
-    expire = Joken.current_time() + @hour_in_seconds
+  add_hook(JokenJwks, jwks_url: @jwks_url)
 
-    default_claims(
-      skip: [:nbf, :jti],
-      aud: @issuer,
-      iss: @issuer,
-      iat: Joken.current_time(),
-      exp: expire
-    )
-    |> add_claim("sub", fn -> user_id end, nil)
+  @impl true
+  def token_config do
+    %{}
+    |> add_claim("iss", fn -> nil end, &(&1 == @issuer))
+    |> add_claim("aud", fn -> nil end, &(&1 == @audience))
+    |> add_claim("exp", fn -> nil end, &(Joken.current_time() > &1))
   end
 
-  @spec generate(String.t()) :: String.t()
-  def generate(user_id) do
-    {ok, token, _claims} = Joken.generate_and_sign(claims(user_id), %{})
+  # Connect via Autha instance using Turms website.
+  def connect(token) do
+    config = token_config()
 
-    if ok != :ok do
-      ""
-    else
-      token
+    case Joken.verify_and_validate(config, token) do
+      {:ok, claims, _header} ->
+        [user_id | _server] = TurmsWeb.Plugs.Message.split_vanity(Map.get(claims, "sub"))
+
+        case Turms.Repo.get_by(Turms.User, vanity: user_id) do
+          nil ->
+            attrs = %{
+              vanity: user_id,
+              name: user_id
+            }
+
+            changeset = Turms.User.changeset(%Turms.User{}, attrs)
+
+            case Turms.Repo.insert(changeset) do
+              {:ok, user} ->
+                {:ok, user}
+
+              {:error, changeset} ->
+                {:error, {:db_error, changeset}}
+            end
+
+          user ->
+            {:ok, user}
+        end
+
+      {:error, reason} ->
+        {:error, {:auth_error, reason}}
     end
   end
 end

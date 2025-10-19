@@ -11,5 +11,4 @@ Discovery system may be self-hostable. However, a version managed by [Gravitalia
 3. `mix phx.server`
 
 > [!WARNING]  
-> Using self-hosting doesn't allow you to be randomly discovered **OR** to be publicly visible.
-> Your friends will need to specify the domain such as `<username>@<sld>.<tld>` (e.g.: `me@example.com`) instead of your simple Gravitalia username.
+> Self-hosting require a comptable [Autha](https://github.com/Gravitalia/Autha) instance;

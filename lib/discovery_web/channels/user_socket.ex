@@ -23,11 +23,10 @@ defmodule TurmsWeb.UserSocket do
   # configuration](https://hexdocs.pm/phoenix/Phoenix.Endpoint.html#socket/3-websocket-configuration).
   @impl true
   def connect(%{"token" => token}, socket, _connect_info) do
-    {ok, claims} = Joken.verify_and_validate(TurmsWeb.Plugs.Authentification.claims(""), token)
+    {ok, user} = TurmsWeb.Plugs.Authentification.connect(token)
 
     if ok == :ok do
-      user_id = Map.get(claims, "sub")
-
+      user_id = user.vanity
       Logger.debug("#{user_id} is now connected.")
 
       # Assign user_id to socket

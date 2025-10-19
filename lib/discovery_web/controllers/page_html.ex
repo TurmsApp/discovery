@@ -6,5 +6,5 @@ defmodule TurmsWeb.PageHTML do
   """
   use TurmsWeb, :html
 
-  embed_templates "page_html/*"
+  embed_templates("page_html/*")
 end

@@ -23,7 +23,6 @@ defmodule TurmsWeb.Router do
   scope "/api", TurmsWeb do
     pipe_through(:api)
 
-    post("/auth", AuthController, :login_or_signup)
     post("/message", MessageController, :receive)
   end
 

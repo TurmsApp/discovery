@@ -10,5 +10,5 @@ defmodule TurmsWeb.Layouts do
   """
   use TurmsWeb, :html
 
-  embed_templates "layouts/*"
+  embed_templates("layouts/*")
 end
