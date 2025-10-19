@@ -9,7 +9,7 @@ config :discovery, Turms.Repo,
   username: "postgres",
   password: "postgres",
   hostname: "localhost",
-  database: "discovery_test#{System.get_env("MIX_TEST_PARTITION")}",
+  database: "turms_test#{System.get_env("MIX_TEST_PARTITION")}",
   pool: Ecto.Adapters.SQL.Sandbox,
   pool_size: System.schedulers_online() * 2
 
@@ -17,7 +17,7 @@ config :discovery, Turms.Repo,
 # you can enable the server option below.
 config :discovery, TurmsWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "iP5BgAbNql/SmkqjmZMtao44gd2V6u7A37dMD7yZoqrlGc0CIr6Luf6K4q1de4lK",
+  secret_key_base: "HEk89RwfimhD8KMck1ZJvnLaOFk1uF/FY51VFc/PWFe07dFKzGvG4a7iYtvrB738",
   server: false
 
 # Print only warnings and errors during test

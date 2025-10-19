@@ -9,11 +9,13 @@ services:
     ports:
       - 4000:4000
     environment:
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/discovery_dev
+      DATABASE_URL: ecto://postgres:postgres@postgres:5432/discovery_dev
       SECRET_KEY_BASE: SM8qOLrgluwC6o8fdykGC5sGcqlDoCDVpn4Xi15odFN/vdlr4OtwnRSnq/I6dMjI # mix phx.gen.secret
       POOL_SIZE: 5
       PHX_HOST: localhost
       PORT: 4000
+    networks:
+      - authentification
 
   postgres:
     image: postgres:17
