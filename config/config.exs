@@ -46,12 +46,11 @@ config :esbuild,
 
 # Configure tailwind (the version is required)
 config :tailwind,
-  version: "4.1.7",
+  version: "4.1.10",
   discovery: [
     args: ~w(
-      --config=tailwind.config.js
       --input=assets/css/app.css
-      --output=../priv/static/assets/app.css
+      --output=priv/static/assets/app.css
     ),
     cd: Path.expand("..", __DIR__)
   ]
