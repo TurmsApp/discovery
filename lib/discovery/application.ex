@@ -10,6 +10,7 @@ defmodule Turms.Application do
       Turms.Repo,
       {DNSCluster, query: Application.get_env(:discovery, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Turms.PubSub},
+      Turms.Cache.Sdp,
       # Start to serve requests, typically the last entry.
       TurmsWeb.Endpoint
     ]
