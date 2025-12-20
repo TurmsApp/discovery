@@ -31,7 +31,10 @@ defmodule TurmsWeb.MessageController do
             :ok
 
           {:error, changeset} ->
-            Logger.error("Failed to insert message: #{inspect(changeset.errors)}")
+            Logger.error(
+              "Failed to insert message: #{inspect(changeset.errors)}"
+            )
+
             {:error, :db_error}
         end
       else
@@ -50,7 +53,11 @@ defmodule TurmsWeb.MessageController do
     - recipient : String - Message recipient.
     - message : String - Encrypted message content.
   """
-  def receive(conn, %{"sender" => sender, "recipient" => recipient, "message" => msg}) do
+  def receive(conn, %{
+        "sender" => sender,
+        "recipient" => recipient,
+        "message" => msg
+      }) do
     case save(sender, recipient, msg) do
       :ok ->
         Logger.debug("Message from #{sender} to #{recipient} saved.")

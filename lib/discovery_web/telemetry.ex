@@ -11,7 +11,8 @@ defmodule TurmsWeb.Telemetry do
     children = [
       # Telemetry poller will execute the given period measurements
       # every 10_000ms. Learn more here: https://hexdocs.pm/telemetry_metrics
-      {:telemetry_poller, measurements: periodic_measurements(), period: 10_000}
+      {:telemetry_poller,
+       measurements: periodic_measurements(), period: 10_000}
       # Add reporters as children of your supervision tree.
       # {Telemetry.Metrics.ConsoleReporter, metrics: metrics()}
     ]
@@ -58,7 +59,8 @@ defmodule TurmsWeb.Telemetry do
       ),
       summary("discovery.repo.query.decode_time",
         unit: {:native, :millisecond},
-        description: "The time spent decoding the data received from the database"
+        description:
+          "The time spent decoding the data received from the database"
       ),
       summary("discovery.repo.query.query_time",
         unit: {:native, :millisecond},

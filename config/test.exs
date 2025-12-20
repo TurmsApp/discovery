@@ -17,7 +17,8 @@ config :discovery, Turms.Repo,
 # you can enable the server option below.
 config :discovery, TurmsWeb.Endpoint,
   http: [ip: {127, 0, 0, 1}, port: 4002],
-  secret_key_base: "HEk89RwfimhD8KMck1ZJvnLaOFk1uF/FY51VFc/PWFe07dFKzGvG4a7iYtvrB738",
+  secret_key_base:
+    "HEk89RwfimhD8KMck1ZJvnLaOFk1uF/FY51VFc/PWFe07dFKzGvG4a7iYtvrB738",
   server: false
 
 # Print only warnings and errors during test

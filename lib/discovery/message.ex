@@ -9,7 +9,13 @@ defmodule Turms.Message do
     field(:content, :string, redact: true)
     # field must be hashed client-site.
     field(:from, :string)
-    belongs_to(:user, Turms.User, foreign_key: :user_vanity, references: :vanity, type: :string)
+
+    belongs_to(:user, Turms.User,
+      foreign_key: :user_vanity,
+      references: :vanity,
+      type: :string
+    )
+
     timestamps()
   end
 

@@ -36,7 +36,9 @@ defmodule Turms.Cache.Sdp do
 
   defp check_freshness({key, value, expiration}) do
     cond do
-      expiration > :os.system_time(:seconds) -> value
+      expiration > :os.system_time(:seconds) ->
+        value
+
       :else ->
         :ets.delete(@table, key)
         nil
