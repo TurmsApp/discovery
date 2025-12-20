@@ -32,7 +32,7 @@ jobs:
         id: "discovery-version"
         shell: "bash"
         run: |
-          PKG_VERSION="0.1.2" 
+          PKG_VERSION=$(grep 'version:' mix.exs | cut -d '"' -f 2)
           echo "PKG_VERSION=${PKG_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Set image tags
@@ -52,3 +52,5 @@ jobs:
           platforms: ${{ env.PLATFORMS }}
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
