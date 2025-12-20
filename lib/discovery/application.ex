@@ -8,9 +8,11 @@ defmodule Turms.Application do
     children = [
       TurmsWeb.Telemetry,
       Turms.Repo,
-      {DNSCluster, query: Application.get_env(:discovery, :dns_cluster_query) || :ignore},
+      {DNSCluster,
+       query: Application.get_env(:discovery, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Turms.PubSub},
       Turms.Cache.Sdp,
+      TurmsWeb.Presence,
       # Start to serve requests, typically the last entry.
       TurmsWeb.Endpoint
     ]

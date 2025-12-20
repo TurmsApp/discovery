@@ -11,6 +11,7 @@ defmodule TurmsWeb.Plugs.Authentification do
 
   add_hook(JokenJwks, jwks_url: @jwks_url)
 
+  # Implement default token configuration.
   @impl true
   def token_config do
     %{}
@@ -23,33 +24,37 @@ defmodule TurmsWeb.Plugs.Authentification do
   def connect(token) do
     config = token_config()
 
-    case Joken.verify_and_validate(config, token) do
-      {:ok, claims} ->
-        [user_id | _server] = TurmsWeb.Plugs.Message.split_vanity(Map.get(claims, "sub"))
+    with {:ok, claims} <- Joken.verify_and_validate(config, token),
+         user_id <- extract_user_id(claims),
+         {:ok, user} <- find_or_create_user(user_id) do
+      {:ok, user}
+    else
+      {:error, reason} -> {:error, {:auth_error, reason}}
+    end
+  end
 
-        case Turms.Repo.get_by(Turms.User, vanity: user_id) do
-          nil ->
-            attrs = %{
-              vanity: user_id,
-              name: user_id
-            }
+  defp extract_user_id(claims) do
+    claims
+    |> Map.get("sub")
+    |> TurmsWeb.Plugs.Message.split_vanity()
+    |> List.first()
+  end
 
-            changeset = Turms.User.changeset(%Turms.User{}, attrs)
+  defp find_or_create_user(user_id) do
+    case Turms.Repo.get_by(Turms.User, vanity: user_id) do
+      nil ->
+        attrs = %{vanity: user_id, name: user_id}
 
-            case Turms.Repo.insert(changeset) do
-              {:ok, user} ->
-                {:ok, user}
-
-              {:error, changeset} ->
-                {:error, {:db_error, changeset}}
-            end
-
-          user ->
-            {:ok, user}
+        %Turms.User{}
+        |> Turms.User.changeset(attrs)
+        |> Turms.Repo.insert()
+        |> case do
+          {:ok, user} -> {:ok, user}
+          {:error, changeset} -> {:error, {:db_error, changeset}}
         end
 
-      {:error, reason} ->
-        {:error, {:auth_error, reason}}
+      user ->
+        {:ok, user}
     end
   end
 end

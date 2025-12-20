@@ -1,4 +1,7 @@
 defmodule TurmsWeb.DiscoverChannel do
+  @moduledoc """
+  Provides handlers for WebSocket events.
+  """
   require Logger
   use TurmsWeb, :channel
   alias TurmsWeb.MessageController
@@ -21,11 +24,16 @@ defmodule TurmsWeb.DiscoverChannel do
   # Messages sent are retained 5 minutes.
   @impl true
   def handle_info(:after_join, socket) do
-    messages = Turms.Repo.get_by(Turms.Message, user_vanity: socket.assigns.user_id)
+    # Gossip presence.
+    TurmsWeb.Presence.track(socket, socket.assigns.user_id, %{
+      online_at: System.system_time(:second),
+      node: Node.self()
+    })
 
-    IO.inspect(messages)
+    messages =
+      Turms.Repo.all(Turms.Message, user_vanity: socket.assigns.user_id)
 
-    push(socket, "pending_messages", [])
+    push(socket, "pending_messages", %{messages: messages})
     {:noreply, socket}
   end
 
@@ -37,14 +45,18 @@ defmodule TurmsWeb.DiscoverChannel do
 
   # Handle ingoing SDP set requests.
   @impl true
-  def handle_in("sdp", %{"sdp" => sdp}, socket) do
+  def handle_in("sdp", %{"type" => _type, "sdp" => sdp}, socket) do
     Turms.Cache.Sdp.set(socket.assigns.user_id, sdp)
-    {:reply, {:ok}, socket}
+    {:reply, :ok, socket}
   end
 
   # Save message when recipient is not online.
   @impl true
-  def handle_in("message", %{"content" => content, "recipient" => recipient}, socket) do
+  def handle_in(
+        "message",
+        %{"content" => content, "recipient" => recipient},
+        socket
+      ) do
     case TurmsWeb.Plugs.Message.split_vanity(recipient) do
       [_vanity, server] ->
         handle_server_match(server, recipient, content, socket)
@@ -54,7 +66,8 @@ defmodule TurmsWeb.DiscoverChannel do
     end
   end
 
-  defp handle_server_match(server, recipient, content, socket) when server == @server do
+  defp handle_server_match(server, recipient, content, socket)
+       when server == @server do
     hashed_user_id =
       socket.assigns.user_id
       |> to_string()
@@ -63,17 +76,27 @@ defmodule TurmsWeb.DiscoverChannel do
 
     case MessageController.save(hashed_user_id, recipient, content) do
       :ok ->
-        Logger.debug("Message from #{socket.assigns.user_id} to #{recipient} saved.")
+        Logger.debug(
+          "Message from #{socket.assigns.user_id} to #{recipient} saved."
+        )
+
         push(socket, "message", %{error: false, message: ""})
 
       {:error, reason} ->
         Logger.error("Failed to save message (WS): #{reason}")
-        push(socket, "message", %{error: true, message: "Internal server error."})
+
+        push(socket, "message", %{
+          error: true,
+          message: "Internal server error."
+        })
     end
   end
 
   defp handle_server_match(_server, _recipient, _content, socket) do
-    push(socket, "message", %{error: true, message: "Recipient doesn't use the same server"})
+    push(socket, "message", %{
+      error: true,
+      message: "Recipient doesn't use the same server"
+    })
   end
 
   defp push_invalid_recipient(socket) do
