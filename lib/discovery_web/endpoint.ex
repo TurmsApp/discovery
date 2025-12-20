@@ -8,12 +8,12 @@ defmodule TurmsWeb.Endpoint do
     store: :cookie,
     key: "_discovery_key",
     signing_salt: "qIKxW6Ky",
-    same_site: "Lax"
+    same_site: "Strict"
   ]
 
   socket("/live", Phoenix.LiveView.Socket,
     websocket: [connect_info: [session: @session_options]],
-    longpoll: [connect_info: [session: @session_options]]
+    longpoll: false
   )
 
   socket("/socket", TurmsWeb.UserSocket,

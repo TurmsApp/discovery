@@ -24,7 +24,7 @@ defmodule TurmsWeb.Plugs.Authentification do
     config = token_config()
 
     case Joken.verify_and_validate(config, token) do
-      {:ok, claims, _header} ->
+      {:ok, claims} ->
         [user_id | _server] = TurmsWeb.Plugs.Message.split_vanity(Map.get(claims, "sub"))
 
         case Turms.Repo.get_by(Turms.User, vanity: user_id) do
