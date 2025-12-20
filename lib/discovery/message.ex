@@ -16,7 +16,7 @@ defmodule Turms.Message do
   @doc false
   def changeset(message, attrs) do
     message
-    |> cast(attrs, [:content, :user_vanity])
-    |> validate_required([:content, :user_vanity])
+    |> cast(attrs, [:content, :date, :user_vanity])
+    |> validate_required([:content, :date, :user_vanity])
   end
 end
