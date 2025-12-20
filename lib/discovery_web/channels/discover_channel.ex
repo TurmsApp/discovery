@@ -35,6 +35,13 @@ defmodule TurmsWeb.DiscoverChannel do
     {:reply, {:ok, payload}, socket}
   end
 
+  # Handle ingoing SDP set requests.
+  @impl true
+  def handle_in("sdp", %{"sdp" => sdp}, socket) do
+    Turms.Cache.Sdp.set(socket.assigns.user_id, sdp)
+    {:reply, {:ok}, socket}
+  end
+
   # Save message when recipient is not online.
   @impl true
   def handle_in("message", %{"content" => content, "recipient" => recipient}, socket) do
@@ -61,7 +68,7 @@ defmodule TurmsWeb.DiscoverChannel do
 
       {:error, reason} ->
         Logger.error("Failed to save message (WS): #{reason}")
-        push(socket, "message", %{error: true, message: "Internal server error"})
+        push(socket, "message", %{error: true, message: "Internal server error."})
     end
   end
 
@@ -70,6 +77,6 @@ defmodule TurmsWeb.DiscoverChannel do
   end
 
   defp push_invalid_recipient(socket) do
-    push(socket, "message", %{error: true, message: "Invalid 'recipient'"})
+    push(socket, "message", %{error: true, message: "Invalid 'recipient'."})
   end
 end
